@@ -1,10 +1,12 @@
 import Head from "next/head";
 import { useState } from "react";
+import toast, { Toaster } from "react-hot-toast";
+
 import styles from "./index.module.css";
 
 export default function Home() {
   const [animalInput, setAnimalInput] = useState("");
-  const [result, setResult] = useState();
+  const [result, setResult] = useState([]);
 
   async function onSubmit(event) {
     event.preventDefault();
@@ -16,10 +18,12 @@ export default function Home() {
       body: JSON.stringify({ animal: animalInput }),
     });
     const data = await response.json();
-    setResult(data.result);
+    console.log(data);
+    setResult((prev) => [...prev, data.result]);
     setAnimalInput("");
   }
 
+  console.log(result);
   return (
     <div>
       <Head>
@@ -28,6 +32,10 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
+        <button onClick={() => toast.success("Yay you clicked thi")}>
+          Toat!
+        </button>
+        <Toaster />
         <img src="/dog.png" className={styles.icon} />
         <h3>Name my pet</h3>
         <form onSubmit={onSubmit}>
@@ -40,7 +48,12 @@ export default function Home() {
           />
           <input type="submit" value="Generate names" />
         </form>
-        <div className={styles.result}>{result}</div>
+        <div className={styles.result}>
+          <p>{result}</p>
+          {result.map((el) => {
+            return <p>{el}</p>;
+          })}
+        </div>
       </main>
     </div>
   );
